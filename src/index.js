@@ -5,6 +5,8 @@ const express = require('express');
 
 const userRoutes = require ('./routes/users_route.js');
 
+const productRoutes = require ('./routes/product_route.js');
+
 const middlewareRequest = require('./middleware/logs.js')
 
 const upload = require('./middleware/multer.js')
@@ -27,6 +29,9 @@ app.use('/assets',express.static('public/images'));
 
 //router users
 app.use('/users',userRoutes);
+
+//router products
+app.use('/products',productRoutes);
 
 app.post('/upload', upload.single('photo'),(req, res) =>{
   res.json({
