@@ -10,6 +10,8 @@ router.get('/getProduct/:product_id', productController.getProductById);
 
 //CREATE-POST
 router.post('/createProduct', productController.createProduct);
+
+//UPDATE-PUT
 router.put('/updateProduct/:product_id', productController.updateProduct);
 
 //DELETE

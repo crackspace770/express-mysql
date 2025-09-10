@@ -64,7 +64,7 @@ const getProductById = async (req, res) => {
         await ProductModel.createProduct(body);
         res.status(201).json({
             message: "Product created successfully",
-            data: null
+            data: {productName: body.productName, productCategory: body.productCategory, description: body.description, productQuantity: body.productQuantity, productPrice: body.productPrice, productWeight: body.productWeight}
         });
     } catch (error) {
         res.status(500).json({
@@ -74,30 +74,41 @@ const getProductById = async (req, res) => {
     }
 };
 
-    const updateProduct = async (req, res) => {
-        const {product_id} = req.params;
-        const {body} = req;
+const updateProduct = async (req, res) => {
+    const { product_id } = req.params;
+    const { body } = req;
 
-        try{
-            //update product
-            const [result] = await ProductModel.updateProduct(body, product_id);
-            if(result.affectedRows === 0){
-                return res.status(404).json({
-                    message: "Product not found",
-                    data: null
-                });
-            }
-            res.status(200).json({
-                message: "Product updated successfully",
-                data: result
-            });
-        }catch(error){
-            res.status(500).json({
-                message: "Error updating product",
-                error: error.message
+    // Validasi input minimal ada 1 field
+    if (!body.name && !body.category && !body.description && 
+        !body.quantity && !body.price && !body.weight) {
+        return res.status(400).json({
+            message: "Bad Request",
+            error: "At least one field is required to update",
+            data: null
+        });
+    }
+
+    try {
+        const [result] = await ProductModel.updateProduct(body, product_id);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                message: "Product not found",
+                data: null
             });
         }
-    };
+
+        res.status(200).json({
+            message: "Product updated successfully",
+            data: {productName: body.productName, productCategory: body.productCategory, description: body.description, productQuantity: body.productQuantity, productPrice: body.productPrice, productWeight: body.productWeight}
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error updating product",
+            error: error.message
+        });
+    }
+};
 
 
     const deleteProduct = async (req, res) => {
