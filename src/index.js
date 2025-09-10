@@ -13,10 +13,19 @@ const upload = require('./middleware/multer.js')
 const app = express();
 
 app.use(middlewareRequest);
+
+//baca json
 app.use(express.json());
+
+// supaya bisa baca form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
+app.use(upload.none());
+
+//akses gambar di public
 app.use('/assets',express.static('public/images'));
 
-
+//router users
 app.use('/users',userRoutes);
 
 app.post('/upload', upload.single('photo'),(req, res) =>{
@@ -25,6 +34,8 @@ app.post('/upload', upload.single('photo'),(req, res) =>{
   })
 })
 
+
+//error handler
 app.use( (err, req, res, next) => {
   res.status(500).json({
     message: err.message

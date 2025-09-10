@@ -4,8 +4,13 @@ const userController = require('../controller/users_controller.js');
 
 const router = express.Router();
 
+const upload = require('../middleware/multer.js');
+
 //READ-GET
 router.get('/getUser', userController.getAllUsers);
+
+//LOGIN - POST
+router.post('/login', userController.loginUser);
 
 //CREATE-POST
 router.post('/createUser', userController.createUser);

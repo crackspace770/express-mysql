@@ -1,4 +1,5 @@
 const UserModel = require('../models/users_model.js');
+const bcrypt = require('bcrypt');
 
 const getAllUsers = async (req, res) => {
 
@@ -23,40 +24,91 @@ const getAllUsers = async (req, res) => {
     
 }
 
-const createUser = async (req, res) => {
-   
-    const {body} = req;
+const loginUser = async (req, res) => {
+    const { email, password } = req.body;
 
-   if (!body.name || !body.email || !body.address) {
-    return res.status(400).json({
-        message: "Bad Request",
-        error: "Name, Email, and Address are required",
-        data: null
-    });
-}
-
-
-    try{
-
-        await UserModel.createUser(body);
-
-        res.status(201).json({
-        message: "POST Users SUCCESS",
-        data: body
-    });
-
-    }catch(error) {
-            res.status(500).json({
-            message: "Error saving users",
-    
-            error: error
-        })
-
-
+    // Validasi input
+    if (!email || !password) {
+        return res.status(400).json({
+            message: "Bad Request",
+            error: "Email and Password are required",
+            data: null
+        });
     }
 
-   
+    try {
+        // cari user by email
+        const [rows] = await UserModel.getUserbyEmail(email);
+        if (rows.length === 0) {
+            return res.status(401).json({
+                message: "Login Failed",
+                error: "Invalid email or password",
+                data: null
+            });
+        }
+
+        const user = rows[0];
+
+        // cek password hash
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({
+                message: "Login Failed",
+                error: "Invalid email or password",
+                data: null
+            });
+        }
+
+        // sukses login
+        res.status(200).json({
+            message: "Login SUCCESS",
+            data: {
+                id_users: user.id_users,
+                name: user.name,
+                email: user.email,
+                address: user.address
+                // password sengaja jangan dikirim
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error login user",
+            error: error.message
+        });
+    }
+};
+
+const createUser = async (req, res) => {
+    const { name, email, address, password } = req.body;
+
+    // Validasi input
+    if (!name || !email || !address || !password) {
+        return res.status(400).json({
+            message: "Bad Request",
+            error: "Name, Email, Address, and Password are required",
+            data: null
+        });
+    }
+
+    try {
+
+         // hash password sebelum simpan
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await UserModel.createUser({ name, email, address, password: hashedPassword });
+
+        res.status(201).json({
+            message: "POST Users SUCCESS",
+            data: { name, email, address, password: hashedPassword }
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error saving users",
+            error: error.message
+        });
+    }
 }
+
 
 const updateUser = async (req, res) => {
     const {id_user} = req.params;
@@ -113,6 +165,7 @@ const deleteUser = async (req, res) => {
 }
 
 module.exports = {
+    loginUser,
     getAllUsers,
     createUser,
     updateUser,
