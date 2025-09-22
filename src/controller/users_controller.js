@@ -8,14 +8,15 @@ const getAllUsers = async (req, res) => {
     const [data, fields] = await UserModel.getAllUsers();
     
     res.status(200).json({
+        success: true,
         message: "GET All Users",
         data: data        
     });
 
     }catch(error){
         res.status(500).json({
+            success: false,
             message: "Error retrieving users",
-    
             error: error
         })
 
@@ -61,6 +62,7 @@ const loginUser = async (req, res) => {
 
         // sukses login
         res.status(200).json({
+            success: true,
             message: "Login SUCCESS",
             data: {
                 id_users: user.id_users,
@@ -84,6 +86,7 @@ const createUser = async (req, res) => {
     // Validasi input
     if (!name || !email || !address || !password) {
         return res.status(400).json({
+            success: false,
             message: "Bad Request",
             error: "Name, Email, Address, and Password are required",
             data: null
@@ -98,11 +101,13 @@ const createUser = async (req, res) => {
         await UserModel.createUser({ name, email, address, password: hashedPassword });
 
         res.status(201).json({
+            success: true,
             message: "POST Users SUCCESS",
             data: { name, email, address, password: hashedPassword }
         });
     } catch (error) {
         res.status(500).json({
+            success: false,
             message: "Error saving users",
             error: error.message
         });
@@ -119,6 +124,7 @@ const updateUser = async (req, res) => {
         await UserModel.updateUser(body, id_user);
 
         res.status(201).json({
+        success: true,
         message: "UPDATE Users SUCCESS",
         data: {
             id: id_user,
@@ -129,6 +135,7 @@ const updateUser = async (req, res) => {
     }catch(error){
 
          res.status(500).json({
+            success: false,
             message: "Error saving users",
     
             error: error
@@ -147,6 +154,7 @@ const deleteUser = async (req, res) => {
         await UserModel.deleteUser(id_user);
 
         res.status(200).json({
+            success: true,
             message: `DELETE Users ID: ${id_user} SUCCESS`,
             data: null
         });
@@ -154,6 +162,7 @@ const deleteUser = async (req, res) => {
     }catch(error){
 
         res.status(500).json({
+            success: false,
             message: "Error delete users",
     
             error: error

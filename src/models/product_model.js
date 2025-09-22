@@ -14,9 +14,9 @@ const getProductById = (product_id) => {
 const createProduct = (body) => {
 
 const SQLQuery = `
-    INSERT INTO products (product_name, product_category, description, product_quantity, product_price, product_weight) 
+    INSERT INTO products (product_name, id_category, description, product_quantity, product_price, product_weight) 
     VALUES (?, ?, ?, ?, ?, ?)`;
-    return dbPool.execute(SQLQuery, [body.productName, body.productCategory, body.description, body.productQuantity, body.productPrice, body.productWeight]);
+    return dbPool.execute(SQLQuery, [body.productName, body.idCategory, body.description, body.productQuantity, body.productPrice, body.productWeight]);
 
 }
 
@@ -25,7 +25,7 @@ const updateProduct = (body, product_id) =>{
     const SQLQuery = `
     UPDATE products 
     SET product_name = '${body.productName}', 
-    product_category = '${body.productCategory}', 
+    id_category = '${body.idCategory}', 
     description = '${body.description}', 
     product_quantity = ${body.productQuantity}, 
     product_price = ${body.productPrice}, 

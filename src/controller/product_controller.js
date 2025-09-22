@@ -8,12 +8,14 @@ const getAllProducts = async (req, res) => {
         const [data, fields] = await ProductModel.getAllProducts();
         
         res.status(200).json({
+            success: true,
             message: "GET All Products",
             data: data        
         });
 
     }catch(error){
         res.status(500).json({
+            success: false,
             message: "Error retrieving products",
             error: error.message
         });
@@ -29,17 +31,20 @@ const getProductById = async (req, res) => {
         const [data, fields] = await ProductModel.getProductById(product_id);
         if(data.length === 0){
             return res.status(404).json({
+                success: false,
                 message: "Product not found",
                 data: null
             });
         }else{
             res.status(200).json({
+                success: true,
                 message: "GET Product by ID",
                 data: data[0]
             });
         }
     }catch(error){
         res.status(500).json({
+            success: false,
             message: "Error retrieving product",
             error: error.message
         });
@@ -51,9 +56,14 @@ const getProductById = async (req, res) => {
     const createProduct = async (req, res) => {
     const body = req.body;
 
-    if (!body || !body.productName || !body.productCategory || !body.description || 
-        !body.productQuantity || !body.productPrice || !body.productWeight) {
+    if (  body.productName === undefined || 
+    body.idCategory === undefined || 
+    body.description === undefined || 
+    body.productQuantity === undefined || 
+    body.productPrice === undefined || 
+    body.productWeight === undefined) {
         return res.status(400).json({
+            success: false,
             message: "Bad Request",
             error: "All fields are required",
             data: null
@@ -63,11 +73,13 @@ const getProductById = async (req, res) => {
     try {
         await ProductModel.createProduct(body);
         res.status(201).json({
+            success: true,
             message: "Product created successfully",
-            data: {productName: body.productName, productCategory: body.productCategory, description: body.description, productQuantity: body.productQuantity, productPrice: body.productPrice, productWeight: body.productWeight}
+            data: {productName: body.productName, idCategory: body.idCategory, description: body.description, productQuantity: body.productQuantity, productPrice: body.productPrice, productWeight: body.productWeight}
         });
     } catch (error) {
         res.status(500).json({
+            success: false,
             message: "Error creating product",
             error: error.message
         });
@@ -82,6 +94,7 @@ const updateProduct = async (req, res) => {
     if (!body.name && !body.category && !body.description && 
         !body.quantity && !body.price && !body.weight) {
         return res.status(400).json({
+            success: false,
             message: "Bad Request",
             error: "At least one field is required to update",
             data: null
@@ -93,17 +106,20 @@ const updateProduct = async (req, res) => {
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
+                success: false,
                 message: "Product not found",
                 data: null
             });
         }
 
         res.status(200).json({
+            success : true,
             message: "Product updated successfully",
-            data: {productName: body.productName, productCategory: body.productCategory, description: body.description, productQuantity: body.productQuantity, productPrice: body.productPrice, productWeight: body.productWeight}
+            data: {productName: body.productName, idCategory: body.idCategory, description: body.description, productQuantity: body.productQuantity, productPrice: body.productPrice, productWeight: body.productWeight}
         });
     } catch (error) {
         res.status(500).json({
+            success: false,
             message: "Error updating product",
             error: error.message
         });
@@ -117,6 +133,7 @@ const updateProduct = async (req, res) => {
         try{
             if(!product_id){
                 return res.status(400).json({
+                    success: false,
                     message: "Bad Request",
                     error: "Product ID is required",
                     data: null
@@ -126,12 +143,14 @@ const updateProduct = async (req, res) => {
             await ProductModel.deleteProduct(product_id);
 
             res.status(200).json({
+                success: true,
                 message: "Product deleted successfully",
                 data: null
             });
 
         }catch(error){
             res.status(500).json({
+                success: false,
                 message: "Error deleting product",
                 error: error.message
             })
