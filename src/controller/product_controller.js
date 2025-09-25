@@ -1,3 +1,4 @@
+const { get } = require('http');
 const ProductModel = require('../models/product_model.js');    
 const fs = require('fs');
 
@@ -6,6 +7,51 @@ const getAllProducts = async (req, res) => {
     try{
 
         const [data, fields] = await ProductModel.getAllProducts();
+        
+        res.status(200).json({
+            success: true,
+            message: "GET All Products",
+            data: data        
+        });
+
+    }catch(error){
+        res.status(500).json({
+            success: false,
+            message: "Error retrieving products",
+            error: error.message
+        });
+    }
+
+}
+
+const getAllCategory = async (req, res) => {    
+
+    try{
+
+        const [data, fields] = await ProductModel.getCategoryProduct();
+        
+        res.status(200).json({
+            success: true,
+            message: "GET All Category",
+            data: data        
+        });
+
+    }catch(error){
+        res.status(500).json({
+            success: false,
+            message: "Error retrieving category",
+            error: error.message
+        });
+    }
+
+}
+
+
+const getAllProducts2 = async (req, res) => {
+
+    try{
+
+        const [data, fields] = await ProductModel.getProducts2();
         
         res.status(200).json({
             success: true,
@@ -159,6 +205,8 @@ const updateProduct = async (req, res) => {
 
 module.exports = {
     getAllProducts,
+    getAllProducts2,
+    getAllCategory,
     getProductById,
     createProduct,
     updateProduct,

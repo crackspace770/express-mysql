@@ -6,6 +6,29 @@ const getAllProducts = ()  => {
     return dbPool.execute(SQLQuery);
 }
 
+const getCategoryProduct = () =>{
+    const SQLQuery = 'SELECT * FROM product_category';
+    return dbPool.execute(SQLQuery);
+}
+
+const getProducts2 = ()  => {  
+
+    const SQLQuery = `
+    SELECT p.product_id, 
+    p.product_name, 
+    p.description, 
+    p.product_quantity, 
+    p.product_price, 
+    p.product_weight, 
+    c.name_category
+    FROM products p
+    JOIN product_category c 
+    ON p.id_category = c.id_category
+    `;
+
+    return dbPool.execute(SQLQuery);
+}
+
 const getProductById = (product_id) => {
     const SQLQuery = 'SELECT * FROM products WHERE product_id = ? LIMIT 1';
     return dbPool.execute(SQLQuery, [product_id]);
@@ -43,6 +66,8 @@ const deleteProduct = (product_id) => {
 
 module.exports = {
     getAllProducts,
+    getCategoryProduct,
+    getProducts2,
     getProductById,
     createProduct,
     updateProduct,

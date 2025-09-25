@@ -6,6 +6,10 @@ const router = express.Router();
 
 //READ-GET
 router.get('/getProduct', productController.getAllProducts);
+router.get('/getProduct2', productController.getAllProducts2);
+
+router.get('/getCategory', productController.getAllCategory);
+
 router.get('/getProduct/:product_id', productController.getProductById);
 
 //CREATE-POST
